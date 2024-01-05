@@ -1,4 +1,7 @@
 #include <iostream>
+#include <unordered_map>
+#include <string>
+#include <cmath>
 
 int Fib(int n)
 {
@@ -45,6 +48,89 @@ int FibDP2(int N)
 	return StoredAnswer;
 }
 
+int MinStepsBrute(int n)
+{
+
+	//Base Case 
+	if (n <= 1)
+	{
+		return 0;
+	}
+
+	//Recursive
+	int x = MinStepsBrute(n-1);
+	int y = INT_MAX;
+	int z = INT_MAX;
+
+	if (n % 2 == 0)
+	{
+		y = MinStepsBrute(n / 2);
+	}
+	
+	if (n % 3 == 0)
+	{
+		z = MinStepsBrute(n / 3);
+	}
+	
+	//Final Output 
+
+	int Answer = std::fmin(x, std::fmin(y, z)) + 1;
+
+	return Answer;
+
+}
+
+int Helper(int n, int* Ans)
+{
+	//Base Case 
+	if (n <= 1)
+	{
+		return 0;
+	}
+
+	//Check if Output exists already 
+	if (Ans[n] != -1)
+	{
+		return Ans[n];
+	}
+
+	//Recursive
+	int x = Helper(n - 1, Ans);
+	int y = INT_MAX;
+	int z = INT_MAX;
+
+	if (n % 2 == 0)
+	{
+		y = Helper(n / 2, Ans);
+	}
+
+	if (n % 3 == 0)
+	{
+		z = Helper(n / 3, Ans);
+	}
+
+	//Final Output 
+
+	int Output = std::fmin(x, std::fmin(y, z)) + 1;
+
+	//Save Your Answer for Future Use 
+
+	Ans[n] = Output;
+
+	return Output;
+
+}
+
+int MinStepsMemorization(int n)
+{
+	int* DP = new int[n + 1];
+	for (size_t i = 0; i <= n; i++)
+	{
+		DP[i] = -1;
+	}
+	return Helper(n, DP);
+}
+
 
 int main()
 {
@@ -60,11 +146,14 @@ int main()
 	{
 		arr[i] = 0;
 	}
-	
-	
-	std::cout << FibDP(n, arr);
-	std::cout << Fib(n);
+
+
+	//std::cout << FibDP(n, arr);
+	//std::cout << Fib(n);
 	//std::cout << FibDP2(n);
+
+	std::cout << MinStepsBrute(n) << "\n";
+	std::cout << MinStepsMemorization(n) << "\n";
 
 	return 0;
 }
