@@ -131,6 +131,69 @@ int MinStepsMemorization(int n)
 	return Helper(n, DP);
 }
 
+int MinStepsBottomUp(int n)
+{
+	int* DP = new int[n + 1];
+	DP[0] = 0;
+	DP[1] = 0;
+
+	//DP[i] = min steps needed to move from i->1, ans = dp[n]
+
+	for (size_t i = 2; i <= n; i++)
+	{
+		int x = DP[i - 1];
+		int y = INT_MAX;
+		int z = INT_MAX;
+
+		if (i % 2 == 0)
+		{
+			y = DP[i/2];
+		}
+
+		if (i % 3 == 0)
+		{
+			z = DP[i/3];
+		}
+		DP[i] = std::fmin(x, std::fmin(y, z)) + 1;
+	}
+
+	int Answer = DP[n];
+
+	delete[] DP;
+
+	return Answer;
+}
+
+int ClimbingStairsRecursive(int n)
+{
+	//Base Case
+	if (n <= 1)
+	{
+		return 1;
+	}
+
+	return ClimbingStairsRecursive(n-1) + ClimbingStairsRecursive(n - 2);
+
+}
+
+int ClimbStairsDP(int n)
+{
+	int* DP = new int[n + 1];
+
+	//Base Case for 0 and 1 steps 
+
+	DP[0] = 1;
+	DP[1] = 1;
+
+
+	for (int i = 2; i <= n; i++)
+	{
+		DP[i] = DP[i - 1] + DP[i - 2];
+	}
+
+	return DP[n];
+
+}
 
 int main()
 {
@@ -154,6 +217,7 @@ int main()
 
 	std::cout << MinStepsBrute(n) << "\n";
 	std::cout << MinStepsMemorization(n) << "\n";
+	std::cout << MinStepsBottomUp(n) << "\n";
 
 	return 0;
 }
