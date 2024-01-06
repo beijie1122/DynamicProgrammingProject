@@ -195,6 +195,28 @@ int ClimbStairsDP(int n)
 
 }
 
+int ClimbStairsGeneral(int n)
+{
+	int* DP = new int[n + 1];
+	DP[0] = 1;
+	int k = 2;
+
+	for (int i = 1; i <= n; i++)
+	{
+		int Answer = 0;
+		for (int Jump = 1; Jump <= k; Jump++)
+		{
+			if (i - Jump >= 0)
+			{
+				Answer += DP[i - Jump];
+			}
+			
+		}
+		DP[i] = Answer;
+	}
+	return DP[n];
+}
+
 int main()
 {
 
