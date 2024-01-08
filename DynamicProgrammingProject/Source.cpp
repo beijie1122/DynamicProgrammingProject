@@ -217,6 +217,149 @@ int ClimbStairsGeneral(int n)
 	return DP[n];
 }
 
+int LongestCommonSubsequence(std::string ST1, int i, std::string ST2, int j)
+{
+	if (i == ST1.size() || j == ST2.size())
+	{
+		return 0;
+	}
+
+	if (ST1.at(i) == ST2.at(j))
+	{
+		return 1 + LongestCommonSubsequence(ST1, i + 1, ST2, j + 1);
+	}
+
+	if (ST1.at(i) != ST2.at(j))
+	{
+		
+		return std::fmax(LongestCommonSubsequence(ST1, i, ST2, j + 1), LongestCommonSubsequence(ST1, i + 1, ST2, j));
+	}
+
+}
+
+int LongestCommonSubsequenceDP(std::string S1, int m, std::string S2, int n)
+{
+	m = S1.size();
+	n = S2.size();
+	int DP[6][6];
+
+	for (size_t i = 0; i <= m; i++)
+	{
+		for (size_t j = 0; j <= n; j++)
+		{
+			if(i == 0 || j == 0)
+			{
+				DP[i][j] == 0;
+			}
+			else if (S1[i - 1] == S2[j - 1])
+			{
+				DP[i][j] = 1 + DP[i - 1][j - 1];
+			}
+			else
+			{
+				DP[i][j] = std::fmax(DP[i - 1][j], DP[i][j - 1]);
+			}
+		}
+	}
+
+	return DP[m][n];
+
+
+}
+
+int MinDistance(std::string Word1, int m, std::string Word2, int n)
+{
+
+	//Base Case: if the word1 is empty 
+	if (m == 0)
+	{
+		return n;
+	}
+
+	//Base Case: if word2 is empty
+	if (n == 0)
+	{
+		return m;
+	}
+
+	if (Word1[m - 1] == Word2[n - 1])
+	{
+		return MinDistance(Word1, m - 1, Word2, n - 1);
+	}
+	int Ins = MinDistance(Word1, m, Word2, n - 1);
+	int Del = MinDistance(Word1, m - 1, Word2, n);
+	int Replace = MinDistance(Word1, m - 1, Word2, n - 1);
+
+	return 1 + std::fmin(Ins, std::fmin(Del, Replace));
+
+}
+
+int MinDistanceDP(std::string Word1, int m, std::string Word2, int n)
+{
+
+	int DP[6][6];
+
+	for (int i = 0; i <= m; i++)
+	{
+		for (int j = 0; j <= n; j++)
+		{
+			if (i == 0)
+			{
+				DP[i][j] = j;
+			}
+			else if (j == 0)
+			{
+				DP[i][j] = i;
+			}
+			else if (Word1[i - 1] == Word2[j - 1])
+			{
+				DP[i][j] = DP[i - 1][j - 1];
+			}
+			else
+			{
+				int Ins = DP[i][j - 1];
+				int Del = DP[i - 1][j];
+				int Replace = DP[i - 1][j - 1];
+				DP[i][j] = 1 + std::min(Ins, std::min(Del, Replace));
+			}
+		}
+	}
+
+	return DP[m][n];
+
+}
+
+int KnapsackRecursive(int PriceVecSize, int KnapsackWeight, std::vector<int> & PriceVec, std::vector<int> & WeightVec)
+{
+
+	//Base Case 
+	if (PriceVecSize == 0 || KnapsackWeight == 0)
+	{
+		return 0;
+	}
+
+	if (WeightVec.at(PriceVecSize - 1) > KnapsackWeight)
+	{
+		return KnapsackRecursive(PriceVecSize - 1, KnapsackWeight, PriceVec, WeightVec);
+	}
+	else
+	{
+		int Include = PriceVec.at(PriceVecSize - 1) + KnapsackRecursive(PriceVecSize - 1, KnapsackWeight - WeightVec.at(PriceVecSize - 1), PriceVec, WeightVec);
+		int Exclude = KnapsackRecursive(PriceVecSize - 1, KnapsackWeight, PriceVec, WeightVec);
+
+		return std::max(Include, Exclude);
+
+	}
+}
+
+int KnapsackDP(int PriceVecSize, int KnapsackWeight, std::vector<int>& PriceVec, std::vector<int>& WeightVec)
+{
+	if (PriceVecSize == 0 || KnapsackWeight == 0)
+	{
+		return 0;
+	}
+}
+
 int main()
 {
 
@@ -237,9 +380,45 @@ int main()
 	//std::cout << Fib(n);
 	//std::cout << FibDP2(n);
 
-	std::cout << MinStepsBrute(n) << "\n";
-	std::cout << MinStepsMemorization(n) << "\n";
-	std::cout << MinStepsBottomUp(n) << "\n";
+	//std::cout << MinStepsBrute(n) << "\n";
+	//std::cout << MinStepsMemorization(n) << "\n";
+	//std::cout << MinStepsBottomUp(n) << "\n";
+
+	std::string String1 = "Apple";
+	std::string String2 = "Mango";
+
+	std::cout << LongestCommonSubsequence(String1, 0, String2, 0) << std::endl;
+
+	std::cout << MinDistance(String1, String1.size(), String2, String2.size());
+
+	std::vector<int> ItemPrice = { 55, 23, 34, 65 };
+	std::vector<int> ItemWeight = { 2, 3, 5, 3 };
+
+	int NumberOfItems = ItemPrice.size();
+	int w = 10;
+
+	std::vector<std::vector<int>> DP(NumberOfItems + 1, std::vector<int>(w + 1, 0));
+	for (int i = 0; i <= NumberOfItems; i++)
+	{
+		for (int j = 0; j <= w; j++)
+		{
+			if (i == 0 || j == 0)
+			{
+				DP[i][j] = 0;
+			}
+			else if (ItemWeight.at(i - 1) > w)
+			{
+				DP[i][j] = DP[i - 1][j];
+			}
+			else
+			{
+				int Ins = ItemPrice.at(i) + DP[i-1][j - ItemWeight.at(i - 1)];
+				int Exc = DP[i - 1][j];
+				DP[i][j] = std::max(Ins, Exc);
+				//std::cout << DP[i][j] << std::endl;
+			}
+		}
+	}
 
 	return 0;
 }
